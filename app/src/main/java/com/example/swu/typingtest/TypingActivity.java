@@ -22,6 +22,7 @@ public class TypingActivity extends AppCompatActivity{
     private int word;
     private int length = 0;
     private int score = 0;
+    private int place = 0;
     private String passageText="";
     private String savedText= "";
     private String remainingSentence="";
@@ -93,34 +94,36 @@ public class TypingActivity extends AppCompatActivity{
                     s.getChars((s.length() - 1), (s.length()), c, 0);
                     if (c[c.length-1]==' '||c[c.length-1]=='.'||c[c.length-1]==','||c[c.length-1]=='?'||c[c.length-1]=='!') {
                         Log.d(TAG, "checked last letter");
-                        for(int i=0; i<text.size(); i++) {
-                            for(int n = i+1; n<text.size(); n++){
+
+                            for(int n = place+1; n<text.size(); n++){
                             remainingSentence= remainingSentence + text.get(n);
                             }
-                            if (et.getText().toString().equals(text.get(i))) {
+                            if (et.getText().toString().equals(text.get(place))) {
                                 Toast.makeText(TypingActivity.this, "CORRECT", Toast.LENGTH_SHORT).show();
 
 
 
-                                String styledText = savedText + "<font color='green' >"+ text.get(i) + "<font color='grey' >"+remainingSentence ;
-                                savedText=savedText+"<font color='green' >"+text.get(i);
+                                String styledText = savedText + "<font color='green' >"+ text.get(place) + "<font color='grey' >"+remainingSentence ;
+                                savedText=savedText+"<font color='green' >"+text.get(place);
                                         //passageText.substring(0, length);
                                         //"<font color='grey' >"+passageText.substring(length, passageText.length()-1);
                                 textView1.setText(Html.fromHtml(styledText), TextView.BufferType.SPANNABLE);
                                 score++;
-                                textView2.setText("Score"+score);
+                                textView2.setText("Score: "+score);
+                                place ++;
                             }
                             else{
                                 Toast.makeText(TypingActivity.this, "WRONG", Toast.LENGTH_SHORT).show();
-                                String styledText = savedText + "<font color='red' >"+ text.get(i) + "<font color='grey' >"+remainingSentence ;
-                                savedText=savedText+"<font color='red' >"+ text.get(i);
+                                String styledText = savedText + "<font color='red' >"+ text.get(place) + "<font color='grey' >"+remainingSentence ;
+                                savedText=savedText+"<font color='red' >"+ text.get(place);
                                 //passageText.substring(0, length);
                                 //"<font color='grey' >"+passageText.substring(length, passageText.length()-1);
                                 textView1.setText(Html.fromHtml(styledText), TextView.BufferType.SPANNABLE);
+                                place ++;
                             }
                             remainingSentence="";
 
-                        }
+
 
                         //textView1.setText(et.getText().toString());
                         et.setText("");
