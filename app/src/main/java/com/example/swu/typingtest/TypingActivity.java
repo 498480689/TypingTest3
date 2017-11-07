@@ -185,7 +185,7 @@ public class TypingActivity extends AppCompatActivity{
 //
 //
 //    }
-
+//
 
 
 
