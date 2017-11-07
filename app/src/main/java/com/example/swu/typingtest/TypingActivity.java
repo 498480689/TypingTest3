@@ -1,11 +1,14 @@
 package com.example.swu.typingtest;
 
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.Html;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -14,7 +17,7 @@ import java.util.ArrayList;
 
 public class TypingActivity extends AppCompatActivity{
 
-    private TextView textView1, textView2;
+    private TextView textView1, textView2, timeView;
     private ArrayList text = new ArrayList<String>();
     private EditText et;
 
@@ -23,6 +26,7 @@ public class TypingActivity extends AppCompatActivity{
     private int length = 0;
     private int score = 0;
     private int place = 0;
+    private int uselessTimeNumber = 0;
     private String passageText="";
     private String savedText= "";
     private String remainingSentence="";
@@ -30,13 +34,22 @@ public class TypingActivity extends AppCompatActivity{
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_typing);
+
+        //Remove title bar
+        this.requestWindowFeature(Window.FEATURE_NO_TITLE);
+
+//Remove notification bar
+        this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+
+//set content view AFTER ABOVE sequence (to avoid crash)
+        this.setContentView(R.layout.activity_typing);
 
 
 
         wireWidgets();
         initPassage();
         spacePressed();
+
 
 
 
@@ -55,6 +68,8 @@ public class TypingActivity extends AppCompatActivity{
         textView1 = (TextView) findViewById(R.id.textView3);
         textView2 = (TextView) findViewById(R.id.textView2);
         et = (EditText) findViewById(R.id.editText);
+        timeView = (TextView) findViewById(R.id.timeView);
+        timeView.setText("Time Remaining: 60");
 
 
     }
@@ -90,6 +105,9 @@ public class TypingActivity extends AppCompatActivity{
             {
                 Log.d(TAG, "entered afterTextChanged");
                 if(s.length()>0) {
+                    uselessTimeNumber++;
+
+
                     Log.d(TAG, "afterTextChanged: checked word length");
                     s.getChars((s.length() - 1), (s.length()), c, 0);
                     if (c[c.length-1]==' '||c[c.length-1]=='.'||c[c.length-1]==','||c[c.length-1]=='?'||c[c.length-1]=='!') {
@@ -128,6 +146,19 @@ public class TypingActivity extends AppCompatActivity{
                         //textView1.setText(et.getText().toString());
                         et.setText("");
                     }
+                }
+                if(uselessTimeNumber == 1) {
+
+                    new CountDownTimer(60000, 1000) {
+
+                        public void onTick(long millisUntilFinished) {
+                            timeView.setText("Time Remaining: " + millisUntilFinished / 1000);
+                        }
+
+                        public void onFinish() {
+                            timeView.setText("done!");
+                        }
+                    }.start();
                 }
 
             }
