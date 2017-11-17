@@ -1,5 +1,6 @@
 package com.example.swu.typingtest;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.support.v7.app.AppCompatActivity;
@@ -11,7 +12,6 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -27,7 +27,13 @@ public class TypingActivity extends AppCompatActivity{
     private int score = 0;
     private int place = 0;
     private int uselessTimeNumber = 0;
+    private int totalCharacters = 0;
+    private String passage1 = "One of our premises here is that writing about literature, as about any subject, gains in urgence, motivation, and engagement when the writer responds to the work not in a vacuum, but in conversation with other readers and critics. We believe that engaging with other readers, far from distracting attention from the literary text itself, should help bring that text into sharper focus. Another premise is that the class discussions that are a daily feature of literature courses can be a rich and provocative source of they says that student writers can respond to in generating their own interpretations.";
+    private String passage2 = "Finally, this edition adds a new chapter on writing online exploring the debate about whether digital technologies improve or degrade the way we think and write, and whether they foster or impeded the meeting of minds. And given the importance of online communication, we're pleased that our book now has its own blog, theysayiblog. Updated monthly with current articles from across media, this blog provides a space where students and teachers can literally join the conversation.";
+    private String passage3 = "It was the hunter's first time outside Montana. He woke, stricken still with the hours-old vision of ascending through rose-lit cumulus, of houses and barns like specks deep in the snowed-in valleys, all the scrolling country below looking December—brown and black hills streaked with snow, flashes of iced-over lakes, the long braids of a river gleaming at the bottom of a canyon. Above the wing the sky had deepened to a blue so pure he knew it would bring tears to his eyes if he looked long enough.Now it was dark.";
     private String passageText="";
+    private String currentPassage ="";
+    private String updatePassage = "";
     private String savedText= "";
     private String remainingSentence="";
     private static final String TAG = "hi";
@@ -75,12 +81,37 @@ public class TypingActivity extends AppCompatActivity{
     }
 
     private void initPassage() {
+        int passNumber = (int)(Math.random()*3+1);
+        if(passNumber ==1 ) {
+            currentPassage = passage1;
+        }
+
+        else if (passNumber ==2 ){//randomly select passage
+            currentPassage = passage2;
+        }
+        else{
+            currentPassage = passage3;
+        }
 
 
-        text.add(new String("Hello "));
-        text.add(new String("hey "));
-        text.add(new String("ma "));
-        text.add(new String("boi "));
+
+        updatePassage = currentPassage;
+
+
+        while(updatePassage.indexOf(" ")>0 && updatePassage.length()>0){
+            text.add(new String(updatePassage.substring(0, (updatePassage.indexOf(" ")+1))));
+
+            updatePassage = updatePassage.substring(updatePassage.indexOf(" ")+1);
+
+
+        }
+        text.add(updatePassage);
+
+
+//        text.add(new String("Hello "));
+//        text.add(new String("hey "));
+//        text.add(new String("ma "));
+//        text.add(new String("boi "));
 
 
         for(int i =0; i<text.size(); i++){
@@ -110,14 +141,15 @@ public class TypingActivity extends AppCompatActivity{
 
                     Log.d(TAG, "afterTextChanged: checked word length");
                     s.getChars((s.length() - 1), (s.length()), c, 0);
-                    if (c[c.length-1]==' '||c[c.length-1]=='.'||c[c.length-1]==','||c[c.length-1]=='?'||c[c.length-1]=='!') {
+                    if (c[c.length-1]==' '){
+                            //||c[c.length-1]=='.'||c[c.length-1]==','||c[c.length-1]=='?'||c[c.length-1]=='!') {
                         Log.d(TAG, "checked last letter");
 
                             for(int n = place+1; n<text.size(); n++){
                             remainingSentence= remainingSentence + text.get(n);
                             }
                             if (et.getText().toString().equals(text.get(place))) {
-                                Toast.makeText(TypingActivity.this, "CORRECT", Toast.LENGTH_SHORT).show();
+
 
 
 
@@ -129,9 +161,10 @@ public class TypingActivity extends AppCompatActivity{
                                 score++;
                                 textView2.setText("Score: "+score);
                                 place ++;
+                                totalCharacters= totalCharacters + ((String)text.get(place)).length();
                             }
                             else{
-                                Toast.makeText(TypingActivity.this, "WRONG", Toast.LENGTH_SHORT).show();
+
                                 String styledText = savedText + "<font color='red' >"+ text.get(place) + "<font color='grey' >"+remainingSentence ;
                                 savedText=savedText+"<font color='red' >"+ text.get(place);
                                 //passageText.substring(0, length);
@@ -156,7 +189,14 @@ public class TypingActivity extends AppCompatActivity{
                         }
 
                         public void onFinish() {
-                            timeView.setText("done!");
+                            timeView.setText("Done!");
+                            et.setEnabled(false);
+                            Intent i = new Intent(TypingActivity.this, endingActivity.class);
+                            i.putExtra("message1", "THE END");
+                            i.putExtra("m2", ("Your Speed: "+ "\n" +score + "WPM" + "\n" + totalCharacters + "CPM"));
+                            startActivity(i);
+
+
                         }
                     }.start();
                 }
