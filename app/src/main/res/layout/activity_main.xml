@@ -17,7 +17,7 @@
         android:lineSpacingExtra="14sp"
         android:text="Typing Speed Texter"
         android:textAlignment="center"
-        android:textColor="@color/colorAccent"
+        android:textColor="@android:color/background_light"
         android:textSize="24sp"
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
