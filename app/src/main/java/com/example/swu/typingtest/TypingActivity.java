@@ -1,6 +1,7 @@
 package com.example.swu.typingtest;
 
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.support.v7.app.AppCompatActivity;
@@ -157,7 +158,12 @@ public class TypingActivity extends AppCompatActivity{
                                 savedText=savedText+"<font color='green' >"+text.get(place);
                                         //passageText.substring(0, length);
                                         //"<font color='grey' >"+passageText.substring(length, passageText.length()-1);
-                                textView1.setText(Html.fromHtml(styledText), TextView.BufferType.SPANNABLE);
+                                if (Build.VERSION.SDK_INT >= 24) {
+                                    textView1.setText(Html.fromHtml(styledText), TextView.BufferType.SPANNABLE); // for 24 api and more
+                                } else {
+                                    textView1.setText(Html.fromHtml(styledText)); // or for older api
+                                }
+
                                 score++;
                                 textView2.setText("Score: "+score);
                                 place ++;
@@ -169,7 +175,11 @@ public class TypingActivity extends AppCompatActivity{
                                 savedText=savedText+"<font color='red' >"+ text.get(place);
                                 //passageText.substring(0, length);
                                 //"<font color='grey' >"+passageText.substring(length, passageText.length()-1);
-                                textView1.setText(Html.fromHtml(styledText), TextView.BufferType.SPANNABLE);
+                                if (Build.VERSION.SDK_INT >= 24) {
+                                    textView1.setText(Html.fromHtml(styledText), TextView.BufferType.SPANNABLE); // for 24 api and more
+                                } else {
+                                    textView1.setText(Html.fromHtml(styledText)); // or for older api
+                                }
                                 place ++;
                             }
                             remainingSentence="";
