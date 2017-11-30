@@ -1,28 +1,32 @@
 package com.example.swu.typingtest;
 
 import android.content.Intent;
-import android.os.Build;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
-import android.text.Html;
+import android.text.SpannableString;
 import android.text.TextWatcher;
+import android.text.style.ForegroundColorSpan;
 import android.util.Log;
+import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
 import java.util.ArrayList;
 
-public class TypingActivity extends AppCompatActivity{
+public class TypingActivity extends AppCompatActivity implements View.OnClickListener{
 
-    private TextView textView1, textView2, timeView;
+    private TextView textView1, textView2, timeView, hintView;
     private ArrayList text = new ArrayList<String>();
     private EditText et;
 
     private String userInput;
+    private Button giveUp;
     private int word;
     private int length = 0;
     private int score = 0;
@@ -37,6 +41,9 @@ public class TypingActivity extends AppCompatActivity{
     private String updatePassage = "";
     private String savedText= "";
     private String remainingSentence="";
+    private int beginningIndex = 0;
+    private int endIndex = 0;
+    private SpannableString styledString;
     private static final String TAG = "hi";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,6 +63,7 @@ public class TypingActivity extends AppCompatActivity{
         wireWidgets();
         initPassage();
         spacePressed();
+        setListeners();
 
 
 
@@ -77,8 +85,37 @@ public class TypingActivity extends AppCompatActivity{
         et = (EditText) findViewById(R.id.editText);
         timeView = (TextView) findViewById(R.id.timeView);
         timeView.setText("Time Remaining: 60");
+        giveUp = (Button) findViewById(R.id.button_giveUp);
+        hintView = (TextView) findViewById(R.id.textView_hint);
+        hintView.setText("*The timer will start once you start typing in the box!" + "\n"+"\n" +" ** Capitalizations are IGNORED!!" );
 
 
+
+    }
+
+    private void setListeners() {
+        giveUp.setOnClickListener(this);
+
+    }
+
+    @Override
+    public void onClick(View view) {
+
+        switch (view.getId()) {
+            case R.id.button_giveUp:
+
+                timeView.setText("Done!");
+                et.setEnabled(false);
+                Intent i = new Intent(TypingActivity.this, endingActivity.class);
+                i.putExtra("message1", "THE END");
+                i.putExtra("m2", ("Your Speed: "+ "\n" +score + "WPM" + "\n" + totalCharacters + "CPM"));
+
+                startActivity(i);
+                finish();
+
+                break;
+
+        }
     }
 
     private void initPassage() {
@@ -119,7 +156,9 @@ public class TypingActivity extends AppCompatActivity{
 
             passageText=(String)passageText+text.get(i);
 
-        }textView1.setText(passageText);
+        }
+        textView1.setText(passageText);
+        styledString= new SpannableString(passageText);
     }
 
 
@@ -138,6 +177,7 @@ public class TypingActivity extends AppCompatActivity{
                 Log.d(TAG, "entered afterTextChanged");
                 if(s.length()>0) {
                     uselessTimeNumber++;
+                    hintView.setText("");
 
 
                     Log.d(TAG, "afterTextChanged: checked word length");
@@ -149,20 +189,24 @@ public class TypingActivity extends AppCompatActivity{
                             for(int n = place+1; n<text.size(); n++){
                             remainingSentence= remainingSentence + text.get(n);
                             }
-                            if (et.getText().toString().equals(text.get(place))) {
+                            if (et.getText().toString().equalsIgnoreCase((String)text.get(place))) {
+                                endIndex = endIndex + ((String)text.get(place)).length();
+                                beginningIndex = endIndex - ((String)text.get(place)).length();
 
 
 
+                                styledString.setSpan(new ForegroundColorSpan(Color.GREEN),beginningIndex, endIndex, 0);
+                                textView1.setText(styledString);
 
-                                String styledText = savedText + "<font color='green' >"+ text.get(place) + "<font color='grey' >"+remainingSentence ;
-                                savedText=savedText+"<font color='green' >"+text.get(place);
-                                        //passageText.substring(0, length);
-                                        //"<font color='grey' >"+passageText.substring(length, passageText.length()-1);
-                                if (Build.VERSION.SDK_INT >= 24) {
-                                    textView1.setText(Html.fromHtml(styledText), TextView.BufferType.SPANNABLE); // for 24 api and more
-                                } else {
-                                    textView1.setText(Html.fromHtml(styledText)); // or for older api
-                                }
+
+//                                String styledText = savedText + "<font color='green' >"+ text.get(place) + "<font color='grey' >"+remainingSentence ;
+//                                savedText=savedText+"<font color='green' >"+text.get(place);
+//
+//                                if (Build.VERSION.SDK_INT >= 24) {
+//                                    textView1.setText(Html.fromHtml(styledText), TextView.BufferType.SPANNABLE); // for 24 api and more
+//                                } else {
+//                                    textView1.setText(Html.fromHtml(styledText)); // or for older api
+//                                }
 
                                 score++;
                                 textView2.setText("Score: "+score);
@@ -170,16 +214,21 @@ public class TypingActivity extends AppCompatActivity{
                                 totalCharacters= totalCharacters + ((String)text.get(place)).length();
                             }
                             else{
+                                endIndex = endIndex + ((String)text.get(place)).length();
+                                beginningIndex = endIndex - ((String)text.get(place)).length();
 
-                                String styledText = savedText + "<font color='red' >"+ text.get(place) + "<font color='grey' >"+remainingSentence ;
-                                savedText=savedText+"<font color='red' >"+ text.get(place);
-                                //passageText.substring(0, length);
-                                //"<font color='grey' >"+passageText.substring(length, passageText.length()-1);
-                                if (Build.VERSION.SDK_INT >= 24) {
-                                    textView1.setText(Html.fromHtml(styledText), TextView.BufferType.SPANNABLE); // for 24 api and more
-                                } else {
-                                    textView1.setText(Html.fromHtml(styledText)); // or for older api
-                                }
+                                styledString.setSpan(new ForegroundColorSpan(Color.RED),beginningIndex, endIndex, 0);
+                                textView1.setText(styledString);
+
+//                                String styledText = savedText + "<font color='red' >"+ text.get(place) + "<font color='grey' >"+remainingSentence ;
+//                                savedText=savedText+"<font color='red' >"+ text.get(place);
+//                                //passageText.substring(0, length);
+//                                //"<font color='grey' >"+passageText.substring(length, passageText.length()-1);
+//                                if (Build.VERSION.SDK_INT >= 24) {
+//                                    textView1.setText(Html.fromHtml(styledText), TextView.BufferType.SPANNABLE); // for 24 api and more
+//                                } else {
+//                                    textView1.setText(Html.fromHtml(styledText)); // or for older api
+//                                }
                                 place ++;
                             }
                             remainingSentence="";
@@ -204,7 +253,9 @@ public class TypingActivity extends AppCompatActivity{
                             Intent i = new Intent(TypingActivity.this, endingActivity.class);
                             i.putExtra("message1", "THE END");
                             i.putExtra("m2", ("Your Speed: "+ "\n" +score + "WPM" + "\n" + totalCharacters + "CPM"));
+
                             startActivity(i);
+                            finish();
 
 
                         }
