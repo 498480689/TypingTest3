@@ -27,6 +27,7 @@ public class endingActivity extends AppCompatActivity {
 
 
     }
+
     private void wireWidgets() {
 
         t1 = (TextView) findViewById(R.id.theEnd);

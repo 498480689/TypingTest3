@@ -33,15 +33,22 @@ public class TypingActivity extends AppCompatActivity implements View.OnClickLis
     private int place = 0;
     private int uselessTimeNumber = 0;
     private int totalCharacters = 0;
-    private String passage1 = "One of our premises here is that writing about literature, as about any subject, gains in urgence, motivation, and engagement when the writer responds to the work not in a vacuum, but in conversation with other readers and critics. We believe that engaging with other readers, far from distracting attention from the literary text itself, should help bring that text into sharper focus. Another premise is that the class discussions that are a daily feature of literature courses can be a rich and provocative source of they says that student writers can respond to in generating their own interpretations.";
-    private String passage2 = "Finally, this edition adds a new chapter on writing online exploring the debate about whether digital technologies improve or degrade the way we think and write, and whether they foster or impeded the meeting of minds. And given the importance of online communication, we're pleased that our book now has its own blog, theysayiblog. Updated monthly with current articles from across media, this blog provides a space where students and teachers can literally join the conversation.";
-    private String passage3 = "It was the hunter's first time outside Montana. He woke, stricken still with the hours-old vision of ascending through rose-lit cumulus, of houses and barns like specks deep in the snowed-in valleys, all the scrolling country below looking December—brown and black hills streaked with snow, flashes of iced-over lakes, the long braids of a river gleaming at the bottom of a canyon. Above the wing the sky had deepened to a blue so pure he knew it would bring tears to his eyes if he looked long enough.Now it was dark.";
+    private String passageEasy1 = "five port map lay country his put low wheel must appear horse their fire cry fall yet stand seem people miss air ago port make never add mind right say everything sit color yet letter vowel teach even eat those sing world miss these yes was seem mother door vowel watch surface area life game leave get fine brought air them deep sleep cross final start wind white keep teach get";
+    private String passageEasy2 = "give watch slow most game home here sentence found watch yes where live walk out cut rule something play for had to who were them strong hot family which well hear ship distant moy wonder under very soon short down study questions use game of cover piece money end note once new with speed only head wait by happen also cross what told any thousand inch during box cold than up self let only sit plan stood through first far help problem ever possible";
+    private String passageEasy3 = "how low head house state through ease look man go land ran what real kind measure horse low bed table made color those children toward my money hold fact this between and old were had simple end distant had should group five feet close rock draw why star product night add order body toward truestudy fast sound last heard cut cross free true horse class hand develop father north course star";
+    private String passageMedium1 = "One of our premises here is that writing about literature, as about any subject, gains in urgence, motivation, and engagement when the writer responds to the work not in a vacuum, but in conversation with other readers and critics. We believe that engaging with other readers, far from distracting attention from the literary text itself, should help bring that text into sharper focus. Another premise is that the class discussions that are a daily feature of literature courses can be a rich and provocative source of they says that student writers can respond to in generating their own interpretations.";
+    private String passageMedium2 = "Finally, this edition adds a new chapter on writing online exploring the debate about whether digital technologies improve or degrade the way we think and write, and whether they foster or impeded the meeting of minds. And given the importance of online communication, we're pleased that our book now has its own blog. Updated monthly with current articles from across media, this blog provides a space where students and teachers can literally join the conversation.";
+    private String passageMedium3 = "It was the hunter's first time outside Montana. He woke, stricken still with the hours-old vision of ascending through rose-lit cumulus, of houses and barns like specks deep in the snowed-in valleys, all the scrolling country below looking December—brown and black hills streaked with snow, flashes of iced-over lakes, the long braids of a river gleaming at the bottom of a canyon. Above the wing the sky had deepened to a blue so pure he knew it would bring tears to his eyes if he looked long enough.Now it was dark.";
+    private String passageHard1 = "molybdenum piazzas pizazz foramens o bstinance assuming suburban pizzas lin oleum aluminum unmanageable, problematical, unaccomodating, troublesome, perplexing, formidable, uncooperative, intransigent description of a sentence. Weird accommodate handkerchief indict cemetery conscience rhythm playwright stewardesses johnny-jump-jump caresses pizzazz suburban obstinate pneumonoultramicroscopicsilicovolcanoconiosis";
+    private String passageHard2 = "otorhinolaryngological immunoelectrohoretically psychophysicotherapeutics thyroparathyroidectomized pneumoencephalographically rodioimmunoelectrophoresis psychoneuroendocrinological hepaticocholangiogastrostomy spectrophotofluorometrically pseudopseudohypoparathyroidism pneumonoultramicroscopicsilicovolcanoconiosis pseudopseudohypoparathyroidism floccinaucinihilipilification antidisestablishmentariansm";
+    private String passageHard3 = "supercalifragilisticexpialidocious incomprehensibilities strengths euouae unimaginatively honorificabilitudinitatibus tsktsk uncopyrightable subdermatoglyphic sesquipedalianism honorificabilitudinitatibus antidisestablishmentariansm pneumoencephalographically rodioimmunoelectrophoresis psychoneuroendocrinological hepaticocholangiogastrostomy spectrophotofluorometrically";
     private String passageText="";
     private String currentPassage ="";
     private String updatePassage = "";
     private String savedText= "";
     private String remainingSentence="";
     private int beginningIndex = 0;
+    private int letterLengthOfPassage = 0;
     private int endIndex = 0;
     private SpannableString styledString;
     private static final String TAG = "hi";
@@ -79,6 +86,8 @@ public class TypingActivity extends AppCompatActivity implements View.OnClickLis
 
 
     }
+
+
     private void wireWidgets() {
         textView1 = (TextView) findViewById(R.id.textView3);
         textView2 = (TextView) findViewById(R.id.textView2);
@@ -119,17 +128,64 @@ public class TypingActivity extends AppCompatActivity implements View.OnClickLis
     }
 
     private void initPassage() {
-        int passNumber = (int)(Math.random()*3+1);
-        if(passNumber ==1 ) {
-            currentPassage = passage1;
+        ArrayList easy = new ArrayList<String>();
+        easy.add(passageEasy1);
+        easy.add(passageEasy2);
+        easy.add(passageEasy3);
+        ArrayList medium = new ArrayList<String>();
+        medium.add(passageMedium1);
+        medium.add(passageMedium2);
+        medium.add(passageMedium3);
+        ArrayList hard = new ArrayList<String>();
+        hard.add(passageHard1);
+        hard.add(passageHard2);
+        hard.add(passageHard3);
+        Intent i = getIntent();
+        String s = i.getStringExtra("difficulty");
+        if (((String)s).equals("easy"))
+        {
+            int passNumber = (int)(Math.random()*3+1);
+            if(passNumber ==1 ) {
+                currentPassage = (String)easy.get(passNumber-1);
+            }
+
+            else if (passNumber ==2 ){//randomly select passage
+                currentPassage = (String)easy.get(passNumber-1);
+            }
+            else{
+                currentPassage = (String)easy.get(passNumber-1);
+            }
+        }
+        if (((String)s).equals("medium"))
+        {
+            int passNumber = (int)(Math.random()*3+1);
+            if(passNumber ==1 ) {
+                currentPassage = (String)medium.get(passNumber-1);
+            }
+
+            else if (passNumber ==2 ){//randomly select passage
+                currentPassage = (String)medium.get(passNumber-1);
+            }
+            else{
+                currentPassage = (String)medium.get(passNumber-1);
+            }
+        }
+        if (((String)s).equals("hard"))
+        {
+            int passNumber = (int)(Math.random()*3+1);
+            if(passNumber ==1 ) {
+                currentPassage = (String)hard.get(passNumber-1);
+            }
+
+            else if (passNumber ==2 ){//randomly select passage
+                currentPassage = (String)hard.get(passNumber-1);
+            }
+            else{
+                currentPassage = (String)hard.get(passNumber-1);
+            }
         }
 
-        else if (passNumber ==2 ){//randomly select passage
-            currentPassage = passage2;
-        }
-        else{
-            currentPassage = passage3;
-        }
+
 
 
 
@@ -152,13 +208,18 @@ public class TypingActivity extends AppCompatActivity implements View.OnClickLis
 //        text.add(new String("boi "));
 
 
-        for(int i =0; i<text.size(); i++){
+        for(int n =0; n<text.size(); n++){
 
-            passageText=(String)passageText+text.get(i);
+            passageText=(String)passageText+text.get(n);
 
         }
         textView1.setText(passageText);
         styledString= new SpannableString(passageText);
+
+        for(int n = place; n<text.size(); n++){
+            letterLengthOfPassage= letterLengthOfPassage + ((String)text.get(n)).length();
+            Log.d(TAG, "length of passage = "+letterLengthOfPassage);
+        }
     }
 
 
@@ -186,12 +247,26 @@ public class TypingActivity extends AppCompatActivity implements View.OnClickLis
                             //||c[c.length-1]=='.'||c[c.length-1]==','||c[c.length-1]=='?'||c[c.length-1]=='!') {
                         Log.d(TAG, "checked last letter");
 
-                            for(int n = place+1; n<text.size(); n++){
-                            remainingSentence= remainingSentence + text.get(n);
-                            }
+
+
+                            if(endIndex>= letterLengthOfPassage){
+                            timeView.setText("Done!");
+                            et.setEnabled(false);
+                            Intent i = new Intent(TypingActivity.this, endingActivity.class);
+                            i.putExtra("message1", "THE END");
+                            i.putExtra("m2", ("Your Speed: "+ "\n" +score + "WPM" + "\n" + totalCharacters + "CPM"));
+
+                            startActivity(i);
+                            finish();
+                        }
                             if (et.getText().toString().equalsIgnoreCase((String)text.get(place))) {
+                                Log.d(TAG, "current place checking"+place);
                                 endIndex = endIndex + ((String)text.get(place)).length();
                                 beginningIndex = endIndex - ((String)text.get(place)).length();
+                                Log.d(TAG, "current beginning index"+beginningIndex);
+                                Log.d(TAG, "current ending index"+endIndex);
+
+
 
 
 
@@ -214,8 +289,21 @@ public class TypingActivity extends AppCompatActivity implements View.OnClickLis
                                 totalCharacters= totalCharacters + ((String)text.get(place)).length();
                             }
                             else{
+                                Log.d(TAG, "current place checking"+place);
                                 endIndex = endIndex + ((String)text.get(place)).length();
                                 beginningIndex = endIndex - ((String)text.get(place)).length();
+                                Log.d(TAG, "current beginning index"+beginningIndex);
+                                Log.d(TAG, "current ending index"+endIndex);
+//                                if(beginningIndex> letterLengthOfPassage){
+//                                    timeView.setText("Done!");
+//                                    et.setEnabled(false);
+//                                    Intent i = new Intent(TypingActivity.this, endingActivity.class);
+//                                    i.putExtra("message1", "THE END");
+//                                    i.putExtra("m2", ("Your Speed: "+ "\n" +score + "WPM" + "\n" + totalCharacters + "CPM"));
+//
+//                                    startActivity(i);
+//                                    finish();
+//                                }
 
                                 styledString.setSpan(new ForegroundColorSpan(Color.RED),beginningIndex, endIndex, 0);
                                 textView1.setText(styledString);
